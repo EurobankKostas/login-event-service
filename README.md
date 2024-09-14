@@ -1,11 +1,10 @@
-# Login Service
+# Login Event Service
 
 ## Overview
-The Login Service manages user authentication and session tracking. It is designed to emit login events to a Kafka topic upon user login and listen for updates on player bonuses from another Kafka topic. 
-This service is integral for maintaining user sessions and providing real-time feedback on user bonuses.
+The Login Event service designed to emit login events to a Kafka topic upon user login and listen for updates on player bonuses from another Kafka topic.
 
 ## Prerequisites
-- Java JDK 17
+- Java JDK 21
 - Docker
 - Kafka setup with the necessary topics configured
 - Access to a relational database (PostgreSQL)

@@ -1,4 +1,4 @@
-package catoritech.login.resources;
+package catoritech.login.web;
 
 import catoritech.login.domain.dto.LoginRequest;
 import catoritech.login.service.LoginService;

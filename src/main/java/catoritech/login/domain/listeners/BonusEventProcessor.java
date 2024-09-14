@@ -2,6 +2,7 @@ package catoritech.login.domain.listeners;
 
 import catoritech.login.domain.dto.BonusEventProcess;
 import catoritech.login.service.BonusService;
+import catoritech.login.service.EventService;
 import io.quarkus.vertx.ConsumeEvent;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,6 +16,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BonusEventProcessor {
 
+    private final EventService eventService;
+
     private final BonusService bonusService;
 
     @ConsumeEvent("bonus-events-process")
@@ -22,20 +25,14 @@ public class BonusEventProcessor {
         log.debug("#processBonusEvent: bonusEventProcess={}", bonusEventProcess);
         UUID eventId = bonusEventProcess.getEventId();
 
-        return bonusService.checkIfLoginEventShouldBeSkipped(eventId)
+        return eventService.checkIfBonusEventShouldBeSkipped(eventId)
                 .flatMap(skip -> {
                     if (skip) {
                         log.warn("eventId={} already processed, skipping...", eventId);
                         return Uni.createFrom().voidItem();
                     }
-                    return processBonusEvent(bonusEventProcess, eventId);
+                    return bonusService.updatePlayerBonus(bonusEventProcess, eventId);
                 })
                 .replaceWithVoid();
-    }
-
-    private Uni<Void> processBonusEvent(BonusEventProcess bonusEventProcess, UUID eventId) {
-        return bonusService.persistPlayerBonusWithAuditing(bonusEventProcess, eventId)
-                .onFailure()
-                .invoke(ex -> log.error("error processing player bonus for eventId={}", eventId, ex));
     }
 }
